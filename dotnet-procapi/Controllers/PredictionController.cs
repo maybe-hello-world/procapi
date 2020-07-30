@@ -15,6 +15,7 @@ namespace ProcAPI.Controllers
     [Route("[controller]/[action]")]
     public class PredictionController : ControllerBase
     {
+        private const int DefaultTimeoutMilliSeconds = 10000;
         private readonly IPreprocessor<InputData, string> _inputPreprocessor;
         private readonly IPreprocessor<string, OutputData> _outputPreprocessor;
 
@@ -57,7 +58,7 @@ namespace ProcAPI.Controllers
             consumer.Received += (ch, ea) =>
             {
                 var body = ea.Body.ToArray();
-                tcs.SetResult(System.Text.Encoding.UTF8.GetString(body));
+                tcs.TrySetResult(System.Text.Encoding.UTF8.GetString(body));
             };
             _channel.BasicConsume(ReplyToQueue, true, consumer);
 
@@ -85,8 +86,13 @@ namespace ProcAPI.Controllers
 
             if (type == BackendMessageType.Short)
             {
-                var res = await SendMessageAsync(_routingKey, messageBodyBytes);
-                var outputData = _outputPreprocessor.PreprocessData(res);
+                var resTask = SendMessageAsync(_routingKey, messageBodyBytes);
+                if (await Task.WhenAny(resTask, Task.Delay(DefaultTimeoutMilliSeconds)) != resTask)
+                {
+                    throw new TimeoutException("The operation has timed out");
+                }
+
+                var outputData = _outputPreprocessor.PreprocessData(resTask.Result);
                 return outputData;
             }
             else
