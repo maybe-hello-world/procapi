@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SixLabors.ImageSharp;
 
 namespace ProcAPI.Controllers
 {
@@ -21,11 +22,13 @@ namespace ProcAPI.Controllers
         {
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
             var exception = context?.Error;
-            var code = 500; // Internal Server Error by default
 
-            if (exception is FormatException) code = 400;
-
-            Response.StatusCode = code;
+            Response.StatusCode = exception switch
+            {
+                FormatException _ => 400,
+                InvalidImageContentException _ => 400,
+                _ => 500
+            };
 
             _logger.LogError(exception?.Message);
 
