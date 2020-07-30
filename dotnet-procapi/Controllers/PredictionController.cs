@@ -46,7 +46,12 @@ namespace ProcAPI.Controllers
 
 
             // Initiate Redis connection
-            _redisConnections = ConnectionMultiplexer.Connect(configuration["REDIS_HOSTS"] ?? "localhost");
+            var connectionString = configuration["REDIS_CONNECTION_STRING"] ?? "redis://localhost:6379";
+            if (connectionString.StartsWith("redis://"))
+            {
+                connectionString = connectionString.Substring("redis://".Length);
+            }
+            _redisConnections = ConnectionMultiplexer.Connect(connectionString);
         }
 
 
