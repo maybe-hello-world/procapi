@@ -20,7 +20,7 @@ async def user_exceptions(request: Request, exc: Exception):
     )
 
 
-@app.exception_handler(binascii.Error)
+@app.exception_handler(Exception)
 async def default_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=500,
