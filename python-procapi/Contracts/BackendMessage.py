@@ -5,8 +5,8 @@ from uuid import UUID
 
 
 class BackendMessageType(Enum):
-    Short = "Short"
-    Long = "Long"
+    Short = "short"
+    Long = "long"
 
     def __str__(self):
         return self.value
@@ -14,6 +14,6 @@ class BackendMessageType(Enum):
 
 @dataclass(frozen=True)
 class BackendMessage:
-    MessageType: BackendMessageType
-    Data: str
-    Id: Optional[UUID]
+    message_type: BackendMessageType
+    data: str
+    id: Optional[UUID]

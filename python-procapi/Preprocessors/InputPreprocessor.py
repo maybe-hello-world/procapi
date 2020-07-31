@@ -18,6 +18,6 @@ class InputPreprocessor(IPreprocessor):
 
         buf = io.BytesIO()
         img.save(buf, format="JPEG")
-        return b64encode(buf.getvalue())
+        return b64encode(buf.getvalue()).decode("utf-8")
 
 

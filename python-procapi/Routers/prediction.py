@@ -75,9 +75,9 @@ async def send_to_rabbit(mtype: BackendMessageType, data: InputData) -> Union[Ou
     mid = uuid4()
 
     backend_message = BackendMessage(
-        MessageType=mtype,
-        Data=preprocessed_data,
-        Id=mid if mtype == BackendMessageType.Long else None
+        message_type=mtype,
+        data=preprocessed_data,
+        id=mid if mtype == BackendMessageType.Long else None
     )
 
     message_body = json.dumps(dataclasses.asdict(backend_message), default=str).encode("utf-8")
