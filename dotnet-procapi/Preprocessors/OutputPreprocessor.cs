@@ -5,24 +5,23 @@ namespace ProcAPI.Preprocessors
 {
     public class OutputPreprocessor : IPreprocessor<string, OutputData>
     {
-        private readonly Dictionary<int, string> _map; 
+        private readonly Dictionary<string, string> _map;
 
         public OutputPreprocessor()
         {
-            _map = new Dictionary<int, string>
+            _map = new Dictionary<string, string>
             {
-                {0, "cat"},
-                {1, "dog"}
+                {"0", "cat"},
+                {"1", "dog"}
             };
         }
 
         public OutputData PreprocessData(string data) => new OutputData
         {
-            ResultClass = 
-                int.TryParse(data, out var parsedInt) && 
-                _map.TryGetValue(parsedInt, out var value)
-                ? value
-                : "unknown"
+            ResultClass =
+                _map.TryGetValue(data, out var value)
+                    ? value
+                    : "unknown"
         };
     }
 }
