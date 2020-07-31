@@ -18,7 +18,7 @@ namespace ProcAPI.Preprocessors
 
         public OutputData PreprocessData(string data) => new OutputData
         {
-            result_class = 
+            ResultClass = 
                 int.TryParse(data, out var parsedInt) && 
                 _map.TryGetValue(parsedInt, out var value)
                 ? value

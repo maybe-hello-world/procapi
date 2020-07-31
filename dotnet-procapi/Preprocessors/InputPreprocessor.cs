@@ -14,7 +14,7 @@ namespace ProcAPI.Preprocessors
         public string PreprocessData(InputData data)
         {
             // parse from base64
-            var imgBytes = Convert.FromBase64String(data.img64);
+            var imgBytes = Convert.FromBase64String(data.Img64);
             using var ms = new MemoryStream(imgBytes);
             using var img = Image.Load(ms);
 

@@ -1,9 +1,10 @@
+using Newtonsoft.Json;
+
 namespace ProcAPI.Contracts
 {
     public class OutputData
     {
-        // ReSharper disable once InconsistentNaming
-        // ReSharper disable once NotAccessedField.Global
-        public string result_class;
+        [JsonProperty(PropertyName = "result_class")]
+        public string ResultClass;
     }
 }
