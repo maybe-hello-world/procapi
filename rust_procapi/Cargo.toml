@@ -1,0 +1,21 @@
+[package]
+name = "rust_procapi"
+version = "0.1.0"
+authors = ["maybe-hello-world <maybe.hello.world@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+uuid = { version = "0.8", features = ["serde", "v4"] }
+lazy_static = "^1.4"
+base64 = "0.12.3"
+image = "0.23.8"
+actix-web = "2.0"
+actix-rt = "1.0"
+actix = "0.10.0-alpha.3"
+serde = "1.0.114"
+futures = "0.3"
+
+[dependencies.redis]
+version = "*"
