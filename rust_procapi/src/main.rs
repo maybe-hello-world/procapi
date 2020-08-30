@@ -47,4 +47,5 @@ async fn main() -> std::io::Result<()> {
         .await
 
     // TODO: add logging everywhere
+    // TODO: rust-clippy
 }
