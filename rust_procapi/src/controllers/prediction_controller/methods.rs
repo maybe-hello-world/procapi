@@ -5,7 +5,7 @@ use serde::Deserialize;
 
 use crate::contracts::input_data::InputData;
 use crate::contracts::output_data::OutputData;
-use crate::controllers::prediction_controller::controller::{GetCommand, PredictionActor, PredictionPreprocessor};
+use crate::controllers::prediction_controller::controller::{RedisGetCommand, RedisActor, PredictionPreprocessor};
 use crate::preprocessors::traits::Processor;
 
 #[derive(Deserialize)]
@@ -15,7 +15,7 @@ pub struct ResultRequest {
 
 pub(crate) async fn short(
     data: web::Json<InputData>,
-    actor: web::Data<Addr<PredictionActor>>,
+    actor: web::Data<Addr<RedisActor>>,
     preprocessors: web::Data<PredictionPreprocessor>
 ) -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
@@ -23,7 +23,7 @@ pub(crate) async fn short(
 
 pub(crate) async fn long(
     data: web::Json<InputData>,
-    actor: web::Data<Addr<PredictionActor>>,
+    actor: web::Data<Addr<RedisActor>>,
     preprocessors: web::Data<PredictionPreprocessor>
 ) -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
@@ -32,11 +32,11 @@ pub(crate) async fn long(
 
 pub(crate) async fn result(
     info: web::Query<ResultRequest>,
-    actor: web::Data<Addr<PredictionActor>>,
+    actor: web::Data<Addr<RedisActor>>,
     preprocessors: web::Data<PredictionPreprocessor>
 ) -> impl Responder {
     // ask for the result
-    let result = actor.send(GetCommand { key: info.id.clone() }).await;
+    let result = actor.send(RedisGetCommand { key: info.id.clone() }).await;
 
     // check actor mailbox error
     let result: Result<Option<String>, redis::RedisError> = match result {

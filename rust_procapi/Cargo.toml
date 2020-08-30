@@ -16,6 +16,7 @@ actix-rt = "1.0"
 actix = "0.10.0-alpha.3"
 serde = "1.0.114"
 futures = "0.3"
+lapin = "1.2.2"
 
 [dependencies.redis]
 version = "*"
