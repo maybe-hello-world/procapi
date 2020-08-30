@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Serialize)]
-enum BackendMessageType {
+#[derive(Serialize, Clone)]
+pub(crate) enum BackendMessageType {
     Short,
     Long,
 }
@@ -16,9 +16,9 @@ impl BackendMessageType {
     }
 }
 
-#[derive(Serialize)]
-struct BackendMessage {
-    message_type: String,
-    data: String,
-    id: Uuid,
+#[derive(Serialize, Clone)]
+pub(crate) struct BackendMessage {
+    pub(crate) message_type: BackendMessageType,
+    pub(crate) data: String,
+    pub(crate) id: Option<Uuid>,
 }

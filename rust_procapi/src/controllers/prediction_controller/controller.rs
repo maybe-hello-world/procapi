@@ -13,6 +13,7 @@ use crate::preprocessors::traits::Processor;
 use lapin::options::{QueueDeclareOptions, BasicPublishOptions, BasicConsumeOptions};
 use lapin::publisher_confirm::PublisherConfirm;
 use lapin::types::{ShortString, FieldTable};
+use futures::StreamExt;
 
 pub(crate) struct PredictionPreprocessor {
     pub(crate) input_preprocessor: InputPreprocessor,
@@ -119,7 +120,11 @@ impl RabbitActor {
                 nowait: false
             },
             FieldTable::default()
-        ).await
+        )
+            .await
+            .unwrap().skip_while(|x| x.is_err())
+            .next()
+
     }
 
     async fn handle_long_message(channel: Channel, msg: RabbitLongSendCommand, queue_name: String) -> Result<(), Error> {

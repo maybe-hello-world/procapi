@@ -1,16 +1,46 @@
 use actix::Addr;
 use actix_web::{HttpResponse, Responder, web};
 use redis::RedisError;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::contracts::input_data::InputData;
 use crate::contracts::output_data::OutputData;
-use crate::controllers::prediction_controller::controller::{RedisGetCommand, RedisActor, PredictionPreprocessor};
+use crate::contracts::backend_message::{BackendMessage, BackendMessageType};
+use crate::controllers::prediction_controller::controller::{RedisGetCommand, RedisActor, PredictionPreprocessor, RabbitActor, RabbitLongSendCommand, RabbitShortSendCommand};
 use crate::preprocessors::traits::Processor;
+use std::error::Error;
+use uuid;
+use either::Either;
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 pub struct ResultRequest {
     pub id: String
+}
+
+async fn send_to_rabbit(
+    actor: Addr<RabbitActor>,
+    data: InputData,
+    message_type: BackendMessageType,
+    preprocessors: &PredictionPreprocessor
+) -> Result<Either<OutputData, Uuid>> {
+    let data = preprocessors.input_preprocessor.preprocess_data(data)?;
+    let id = match message_type {
+        BackendMessageType::Long => Some(uuid::Uuid::new_v4()),
+        BackendMessageType::Short => None
+    };
+
+    let backend_mesage = BackendMessage { message_type, data, id: id.clone() };
+    let bytes = serde_json::to_string(&backend_mesage)?.into_bytes();
+
+    if message_type == BackendMessageType::Short {
+        let result:  = actor.send(RabbitShortSendCommand { payload: bytes }).await?;
+        let output_data =
+    } else {
+        actor.send(RabbitLongSendCommand { payload: bytes }).await?;
+        return Ok(Either::Right(id.unwrap()))
+    }
+
 }
 
 pub(crate) async fn short(
@@ -23,9 +53,11 @@ pub(crate) async fn short(
 
 pub(crate) async fn long(
     data: web::Json<InputData>,
-    actor: web::Data<Addr<RedisActor>>,
+    actor: web::Data<Addr<RabbitActor>>,
     preprocessors: web::Data<PredictionPreprocessor>
 ) -> impl Responder {
+
+
     HttpResponse::Ok().body("Hello world!")
 }
 
