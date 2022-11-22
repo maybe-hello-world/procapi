@@ -8,7 +8,7 @@ httptools==0.1.1
 idna==2.10
 multidict==4.7.6
 pamqp==2.3.0
-Pillow==9.0.0
+Pillow==9.3.0
 pydantic==1.6.2
 redis==3.5.3
 starlette==0.13.6
